@@ -78,8 +78,9 @@ import net.sf.keytabgui.util.KeytabFileReader;
  */
 public class Gui extends JFrame implements ActionListener {
 	
-	protected JTable table;
-	protected JFileChooser chooser; // będziemy chcieli w teście uzyskać dostęp do tego pola, by sprawdzić przypadek użycia: użytkownik otwiera plik, plik zostaje wyświetlony w Gui.
+	// pola są protected, abyśmy mogli uzyskać dostęp do nich w teście UseCaseTest
+	protected JTable table;	
+	protected JFileChooser chooser; 
 	protected JButton buttonOpen;
 	protected JDialog errorDialog;
 	
@@ -91,20 +92,15 @@ public class Gui extends JFrame implements ActionListener {
 		toolbar.setRollover(true);
 		
 		chooser = new KeytabFileChooser();
+		chooser.addActionListener(this); // gdy użytkownik wybierze nowy plik, pokażemy jego nazwę w pasku tytułu aplikacji
 		
 		buttonOpen = new JButton("Otwórz plik");
 		buttonOpen.addActionListener(new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Gui.this.chooser.showOpenDialog(Gui.this);
 			}
-			
 		});
-
-		chooser.addActionListener(this); // gdy użytkownik wybierze nowy plik, pokażemy jego nazwę w pasku tytułu aplikacji
-
-		
 		toolbar.add(buttonOpen);
 		
 		this.add(toolbar, BorderLayout.NORTH);
