@@ -107,24 +107,6 @@ public class Gui extends JFrame implements ActionListener {
 		
 		toolbar.add(buttonOpen);
 		
-		
-//		JButton buttonColumnsPalette = new JButton("Chose columns");
-//		toolbar.add(buttonColumnsPalette);
-//		buttonColumnsPalette.addActionListener(new ActionListener(){
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				System.out.println("button pressed: " + ((JButton)e.getSource()).getText());
-//				
-//				List<Class<?>> classes = ClassFinder.find("net.sf.keytabgui.controller.column");
-//				for (Class c: classes){
-//					System.out.println(c);
-//				}
-//			}
-//			
-//		});
-		
 		this.add(toolbar, BorderLayout.NORTH);
 		
 		
