@@ -114,4 +114,21 @@ public class FileReadingTest {
 		
 		// then: IOException is thrown
 	}
+	
+	/**
+	 * Istnieja 2 wersje formatu pliku keytab. Aby zobaczyc jak program zachowa sie
+	 * przy probie otwarcia nieistniejacej wersji 3, tworzymy plik v3.keytab,
+	 * kopiujac plik test.keytab i modyfikujac drugi bit (zmieniamy z 2 na 3).
+	 * @throws IOException 
+	 */
+	@Test(expected = IOException.class)
+	public void checkV3() throws IOException {
+		// given
+		String filename = this.getClass().getResource("v3.keytab").getFile();
+		
+		// when
+		new KeytabFileReader().read(filename);
+		
+		// then: IOException is thrown with message: Uknown keytab file version: 5.3
+	}
 }
