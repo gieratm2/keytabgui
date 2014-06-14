@@ -1,16 +1,21 @@
 package net.sf.keytabgui.util;
 
-import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import net.sf.keytabgui.model.Keytab;
 import net.sf.keytabgui.model.row.KeytabRow;
-import net.sf.keytabgui.model.row.NewKeytabRow;
-import net.sf.keytabgui.model.row.OldKeytabRow;
+import net.sf.keytabgui.util.rowreader.NewRowReader;
+import net.sf.keytabgui.util.rowreader.OldRowReader;
+import net.sf.keytabgui.util.rowreader.RowReader;
 
+/**
+ * Wzorzec Fabryka abstrakcyjna (kreacyjny): 
+ * 
+ * Provide an interface for creating families of related or dependent objects without specifying their concrete classes. 
+ *
+ */
 public class KeytabFileReader {
 	
 	public synchronized Keytab read(String filename) throws IOException {
@@ -21,100 +26,27 @@ public class KeytabFileReader {
 		keytab.setMajorVersion(in.read());
 		keytab.setMinorVersion(in.read());
 		
-		
+		RowReader reader = getRowReader(keytab.getMajorVersion(), keytab.getMinorVersion());
 		List<KeytabRow> rows = keytab.getRows();
 		KeytabRow row = null;
 		while (in.available()>0){
-			switch(keytab.getMinorVersion()){
-			case 1:
-				row = getOldRow(in);
-				break;
-			case 2:
-				row = getNewRow(in);
-				break;
-			default:
-				StringBuilder msg = new StringBuilder("Uknown keytab file version: ");
-				msg.append(keytab.getMajorVersion());
-				msg.append('.');
-				msg.append(keytab.getMinorVersion());
-				throw new IOException(msg.toString());
-			}
-			//System.out.println(row);
-			rows.add(row);
+			rows.add(reader.readRow(in)); // za odczyt wiersza odpowiedzialna jest konkretna klasa
 		}
 		
 		return keytab;
 	}
-
-	private KeytabRow getNewRow(KeytabInputStream in) throws IOException {
-		NewKeytabRow row = new NewKeytabRow();
-		row.setSize(in.readInt());
-		row.setNumComponents(in.readShort());
-		row.setRealm(in.readCountedOctetString());
-		
-		//ip;.
-		
-		String[] components = new String[row.getNumComponents()];
-		for (int i=0; i<row.getNumComponents(); i++){
-			components[i] = in.readCountedOctetString();
+	
+	private RowReader getRowReader(int majorVersion, int minorVersion) throws IOException {
+		switch (minorVersion){
+		case 1: return new OldRowReader();
+		case 2: return new NewRowReader();
+		default:
+			StringBuilder msg = new StringBuilder("Uknown keytab file version: ");
+			msg.append(majorVersion);
+			msg.append('.');
+			msg.append(minorVersion);
+			throw new IOException(msg.toString());
 		}
-		row.setComponents(components);
-		
-		row.setNameType(in.readInt());
-		row.setTimestamp(in.readInt());
-		row.setVno8(in.read());
-		row.setKeyblockType(in.readShort());
-		row.setKeyblock(in.readCountedOctet());
-		
-		if (row.getSize() >= row.countSize()+4)
-			row.setVno((int)in.readShort());
-		
-		return row;
 	}
 
-	private KeytabRow getOldRow(KeytabInputStream in) throws IOException {
-		OldKeytabRow row = new OldKeytabRow();
-		row.setSize(in.readInt());
-		row.setNumComponents(in.readShort());
-		row.setRealm(in.readCountedOctetString());
-		
-		String[] components = new String[row.getNumComponents()];
-		for (int i=0; i<row.getNumComponents(); i++){
-			components[i] = in.readCountedOctetString();
-		}
-		row.setComponents(components);
-		
-		//row.setNameType(in.readInt()); // not present if version 0x501
-		row.setTimestamp(in.readInt());
-		row.setVno8(in.read());
-		row.setKeyblockType(in.readShort());
-		row.setKeyblock(in.readCountedOctet());
-		
-		if (row.getSize() >= row.countSize()+4)
-			row.setVno((int)in.readShort());
-		
-		return row;
-	}
-	
-	
-	
-
-}
-
-class KeytabInputStream extends DataInputStream {
-
-	public KeytabInputStream(InputStream in) {
-		super(in);
-	}
-	
-	public byte[] readCountedOctet() throws IOException {
-		byte[] b = new byte[this.readShort()];
-		this.read(b);
-		return b;
-	}
-	
-	public String readCountedOctetString() throws IOException {
-		return new String(readCountedOctet());
-	}
-	
 }
