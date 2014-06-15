@@ -4,17 +4,17 @@ import java.util.Arrays;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
-import net.sf.keytabgui.controller.Column;
-import net.sf.keytabgui.controller.column.EncType;
-import net.sf.keytabgui.controller.column.EncTypeComment;
-import net.sf.keytabgui.controller.column.EntrySize;
-import net.sf.keytabgui.controller.column.Key;
-import net.sf.keytabgui.controller.column.Kvno;
-import net.sf.keytabgui.controller.column.NameType;
-import net.sf.keytabgui.controller.column.NameTypeComment;
-import net.sf.keytabgui.controller.column.Principal;
-import net.sf.keytabgui.controller.column.Realm;
-import net.sf.keytabgui.controller.column.Timestamp;
+import net.sf.keytabgui.model.Column;
+import net.sf.keytabgui.model.column.EncType;
+import net.sf.keytabgui.model.column.EncTypeComment;
+import net.sf.keytabgui.model.column.EntrySize;
+import net.sf.keytabgui.model.column.Key;
+import net.sf.keytabgui.model.column.Kvno;
+import net.sf.keytabgui.model.column.NameType;
+import net.sf.keytabgui.model.column.NameTypeComment;
+import net.sf.keytabgui.model.column.Principal;
+import net.sf.keytabgui.model.column.Realm;
+import net.sf.keytabgui.model.column.Timestamp;
 
 /**
  * Wzorzec Singleton mozemy pokazac na przykladzie obiektu przechowujacego
@@ -36,9 +36,9 @@ import net.sf.keytabgui.controller.column.Timestamp;
  * obiektu konfiguracji bedziemy uzywac zawsze, przy kazdym uruchomieniu
  * aplikacji):
  * 
- * private static final ConfigSingleton INSTANCE = new ConfigSingleton(); public
- * static ConfigSingleton getInstance() { return INSTANCE; } private
- * ConfigSingleton(){ ... }
+ * private static final ConfigSingleton INSTANCE = new ConfigSingleton(); 
+ * public static ConfigSingleton getInstance() { return INSTANCE; } 
+ * private ConfigSingleton(){ ... }
  * 
  * Joshua Bloch (Architekt w Sunie, tworca kolekcji w java.util) poleca
  * implementowac Singletona na bazie enuma (od Java 1.5)

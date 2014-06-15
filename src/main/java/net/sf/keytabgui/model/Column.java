@@ -1,4 +1,4 @@
-package net.sf.keytabgui.controller;
+package net.sf.keytabgui.model;
 
 import net.sf.keytabgui.model.row.KeytabRow;
 

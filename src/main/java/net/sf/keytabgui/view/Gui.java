@@ -23,8 +23,8 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
-import net.sf.keytabgui.controller.Column;
-import net.sf.keytabgui.controller.CustomTableModel;
+import net.sf.keytabgui.model.Column;
+import net.sf.keytabgui.model.CustomTableModel;
 import net.sf.keytabgui.util.ColumnUtils;
 import net.sf.keytabgui.util.ConfigSingleton;
 import net.sf.keytabgui.util.KeytabFileReader;

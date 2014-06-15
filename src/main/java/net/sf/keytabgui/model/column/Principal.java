@@ -1,6 +1,6 @@
-package net.sf.keytabgui.controller.column;
+package net.sf.keytabgui.model.column;
 
-import net.sf.keytabgui.controller.Column;
+import net.sf.keytabgui.model.Column;
 import net.sf.keytabgui.model.row.KeytabRow;
 
 public class Principal implements Column {

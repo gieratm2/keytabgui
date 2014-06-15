@@ -2,7 +2,7 @@ package net.sf.keytabgui.util;
 
 import java.util.TreeSet;
 
-import net.sf.keytabgui.controller.Column;
+import net.sf.keytabgui.model.Column;
 
 public class ColumnUtils {
 

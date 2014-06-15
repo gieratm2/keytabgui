@@ -1,4 +1,4 @@
-package net.sf.keytabgui.controller;
+package net.sf.keytabgui.model;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +12,6 @@ import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JFileChooser;
 import javax.swing.table.AbstractTableModel;
 
-import net.sf.keytabgui.model.Keytab;
 import net.sf.keytabgui.model.row.KeytabRow;
 import net.sf.keytabgui.util.ColumnUtils;
 import net.sf.keytabgui.util.ConfigSingleton;

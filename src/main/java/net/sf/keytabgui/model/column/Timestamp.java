@@ -1,10 +1,10 @@
-package net.sf.keytabgui.controller.column;
+package net.sf.keytabgui.model.column;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import net.sf.keytabgui.controller.Column;
+import net.sf.keytabgui.model.Column;
 import net.sf.keytabgui.model.row.KeytabRow;
 
 public class Timestamp implements Column {

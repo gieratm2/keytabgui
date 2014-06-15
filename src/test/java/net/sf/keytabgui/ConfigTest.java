@@ -3,9 +3,9 @@ package net.sf.keytabgui;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import net.sf.keytabgui.controller.Column;
-import net.sf.keytabgui.controller.column.EncType;
-import net.sf.keytabgui.controller.column.Kvno;
+import net.sf.keytabgui.model.Column;
+import net.sf.keytabgui.model.column.EncType;
+import net.sf.keytabgui.model.column.Kvno;
 import net.sf.keytabgui.util.ConfigSingleton;
 
 import org.junit.After;
