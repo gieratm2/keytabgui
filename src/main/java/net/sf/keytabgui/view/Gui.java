@@ -6,8 +6,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JButton;
@@ -140,16 +141,20 @@ public class Gui extends JFrame implements ActionListener {
 				
 				JOptionPane.showMessageDialog(Gui.this, list, "Zaznacz, które kolumny pokazywać", JOptionPane.PLAIN_MESSAGE);
 				
-				Column[] columns = new Column[list.getSelectedValuesList().size()];
+				selectedIndices = list.getSelectedIndices();
+				
+				Column[] columns = new Column[selectedIndices.length];
 				// przejrzyjmy liste wszystkich kolumn. 
-				// Jesli tytul kolumny bedzie wybrany, wstawiamy kolumne.				
-				ArrayList<Column> alCols = new ArrayList<Column>();
+				// Jesli tytul kolumny bedzie wybrany, wstawiamy kolumne.
+				Map<String, Column> map = new TreeMap<String, Column>();
 				for (Column column: ConfigSingleton.COLUMNS){
-					if (list.getSelectedValuesList().contains(column.getTitle())){
-						alCols.add(column);
-					}
+					map.put(column.getTitle(), column);
 				}
-				columns = alCols.toArray(columns);
+				
+				for (int i=0; i<columns.length; i++){
+					columns[i] = map.get(colNames[i]);
+				}
+				
 				ConfigSingleton.INSTANCE.setColumns(columns);
 			}
 			

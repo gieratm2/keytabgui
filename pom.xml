@@ -6,6 +6,7 @@
 	<version>0.1</version>
 	<name>KeytabGui2</name>
 	<description>Simple *.keytab files viewer refactored to patterns.</description>
+	<url>https://github.com/gieratm2/keytabgui</url>
 	
 	<developers>
 		<developer>
@@ -67,5 +68,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<url>https://github.com/gieratm2/keytabgui</url>
+	
 </project>
