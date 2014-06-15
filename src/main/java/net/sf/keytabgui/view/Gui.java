@@ -4,20 +4,28 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
 import net.sf.keytabgui.controller.Column;
 import net.sf.keytabgui.controller.CustomTableModel;
-import net.sf.keytabgui.controller.column.*;
+import net.sf.keytabgui.util.ColumnUtils;
+import net.sf.keytabgui.util.ConfigSingleton;
 import net.sf.keytabgui.util.KeytabFileReader;
 
 /**
@@ -83,6 +91,8 @@ public class Gui extends JFrame implements ActionListener {
 	protected JFileChooser chooser; 
 	protected JButton buttonOpen;
 	protected JDialog errorDialog;
+	protected JButton buttonChooseColumns;
+	protected JDialog chooseColumnsDialog;
 	
 	public Gui(){
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,32 +113,63 @@ public class Gui extends JFrame implements ActionListener {
 		});
 		toolbar.add(buttonOpen);
 		
+		buttonChooseColumns = new JButton("Wybierz kolumny");
+		buttonChooseColumns.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				String[] colNames = new String[ConfigSingleton.COLUMNS.length];
+				Set<String> selectedColumnNames = ColumnUtils.getSelectedColumnNames();
+				List<Integer> selectedColumnIdices = new ArrayList<Integer>();
+				for (int i=0; i<ConfigSingleton.COLUMNS.length; i++){
+					colNames[i] = ConfigSingleton.COLUMNS[i].getTitle();
+					if (selectedColumnNames.contains(colNames[i])){
+						selectedColumnIdices.add(i);
+					}
+				}
+				JList list = new JList(colNames);
+				
+				// show on list which columns are currently visible
+				list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				int[] selectedIndices = new int[selectedColumnIdices.size()];
+				for (int i=0; i<selectedIndices.length; i++){
+					selectedIndices[i] = selectedColumnIdices.get(i);
+				}
+				list.setSelectedIndices(selectedIndices);
+				
+				JOptionPane.showMessageDialog(Gui.this, list, "Zaznacz, które kolumny pokazywać", JOptionPane.PLAIN_MESSAGE);
+				
+				Column[] columns = new Column[list.getSelectedValuesList().size()];
+				// przejrzyjmy liste wszystkich kolumn. 
+				// Jesli tytul kolumny bedzie wybrany, wstawiamy kolumne.				
+				ArrayList<Column> alCols = new ArrayList<Column>();
+				for (Column column: ConfigSingleton.COLUMNS){
+					if (list.getSelectedValuesList().contains(column.getTitle())){
+						alCols.add(column);
+					}
+				}
+				columns = alCols.toArray(columns);
+				ConfigSingleton.INSTANCE.setColumns(columns);
+			}
+			
+		});
+		toolbar.add(buttonChooseColumns);
+		
 		this.add(toolbar, BorderLayout.NORTH);
 		
+		Column[] columns = ConfigSingleton.INSTANCE.getColumns();
+		// Wymaganie 10: "czy skorzystano z interfejsów i/lub klas abstrakcyjnych do reprezentowania abstrakcji jako jednego z elementów programowania obiektowego" 
+		// abstrakcja kolumny. Podajemy że kolumna to obiekt implementujący interfejs Column.
+		// Dzięki temu spełniona jest zasada Open/Closed. Gdy chcemy dodać nową kolumnę, (open:) dodajemy klasę implementującą interfejs Column, nastomiast nie dotykamy klasy CustomTableModel (pozostaje Closed).
 		
-		Column[] columns = {
-				new EncType(),
-				new EncTypeComment(),
-				new EntrySize(),
-				new Key(),
-				new Kvno(),
-				new Principal(),
-				new NameType(),
-				new NameTypeComment(),
-				new Realm(),
-				new Timestamp()
-				
-				// Wymaganie 10: "czy skorzystano z interfejsów i/lub klas abstrakcyjnych do reprezentowania abstrakcji jako jednego z elementów programowania obiektowego" 
-				// abstrakcja kolumny. Podajemy że kolumna to obiekt implementujący interfejs Column.
-				// Dzięki temu spełniona jest zasada Open/Closed. Gdy chcemy dodać nową kolumnę, (open:) dodajemy klasę implementującą interfejs Column, nastomiast nie dotykamy klasy CustomTableModel (pozostaje Closed).
-				
-				// To jest wzorzec projektowy Bridge (strukturalny): oddzielamy abstrakcję obiektu od jego implementacji. To wymusza zmniejszenie powiązań (week coupling) między obiektem posługującym się abstrakcją, a konkretnymi implementacjami. (week coupling & strong cohesion).
-				// Strong cohesion poznajemy po tym, że klasa jest poświęcona tylko 1 rzeczy, mała, wszystkie zmienne, które zawiera związane są z tą jedną rzeczą (mówimy o niej: odpowiedzialność).
-				// Przeciwieństwem 'strong cohesion' jest tzw. God-object, czyli klasa, która ma wie wszystko (mnóstwo pól) i robi wszystko (wiele metod). Jest bardzo długa.
-				// 
-				};
+		// To jest wzorzec projektowy Bridge (strukturalny): oddzielamy abstrakcję obiektu od jego implementacji. To wymusza zmniejszenie powiązań (week coupling) między obiektem posługującym się abstrakcją, a konkretnymi implementacjami. (week coupling & strong cohesion).
+		// Strong cohesion poznajemy po tym, że klasa jest poświęcona tylko 1 rzeczy, mała, wszystkie zmienne, które zawiera związane są z tą jedną rzeczą (mówimy o niej: odpowiedzialność).
+		// Przeciwieństwem 'strong cohesion' jest tzw. God-object, czyli klasa, która ma wie wszystko (mnóstwo pól) i robi wszystko (wiele metod). Jest bardzo długa.
+		// 
 		TableModel tableModel = new CustomTableModel(columns);
 		chooser.addActionListener((ActionListener)tableModel);
+		ConfigSingleton.INSTANCE.addPreferenceChangeListener((PreferenceChangeListener)tableModel);
 		table = new JTable(tableModel);
 		table.setFillsViewportHeight(true); // When this property is true the table uses the entire height of the container, even if the table doesn't have enough rows to use the whole vertical space. This makes it easier to use the table as a drag-and-drop target.
 		table.setAutoCreateRowSorter(true); // Dzięki temu użytkownik może sortować wiersze tabeli po wybranej kolumnie

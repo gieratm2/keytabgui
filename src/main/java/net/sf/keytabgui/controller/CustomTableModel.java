@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.JFileChooser;
 import javax.swing.table.AbstractTableModel;
 
 import net.sf.keytabgui.model.Keytab;
 import net.sf.keytabgui.model.row.KeytabRow;
+import net.sf.keytabgui.util.ColumnUtils;
+import net.sf.keytabgui.util.ConfigSingleton;
 import net.sf.keytabgui.util.KeytabFileReader;
 
 /**
@@ -32,7 +36,8 @@ import net.sf.keytabgui.util.KeytabFileReader;
  *  jak i metody przesłaniające metody abstrakcyjne, czyli bez implementacji w klasie nadrzędnej, np. getRowCount, getColumnCount, getValueAt. 
  *
  */
-public class CustomTableModel extends AbstractTableModel implements ActionListener {
+public class CustomTableModel extends AbstractTableModel 
+	implements ActionListener, PreferenceChangeListener {
 	
 	private List<Column> columns = new ArrayList<Column>();
 	private Keytab keytab = new Keytab();
@@ -57,6 +62,17 @@ public class CustomTableModel extends AbstractTableModel implements ActionListen
 			}
 		}
 	}
+	
+	@Override
+	public void preferenceChange(PreferenceChangeEvent evt) {
+		if (evt.getKey().equals(ConfigSingleton.COLUMN_CLASSNAMES)){
+			Column[] cols = ColumnUtils.classnamesToColumns(evt.getNewValue());
+			this.columns.clear();
+			this.columns.addAll(Arrays.asList(cols));
+			this.fireTableStructureChanged();
+		}
+	}
+	
 	
 	
 	@Override
