@@ -56,6 +56,9 @@ import net.sf.keytabgui.model.column.Timestamp;
  *      has yet to be widely adopted, a single-element enum type is the best way
  *      to implement a singleton.
  * 
+ * 
+ * Another possible place to use Singleton?
+ * Error page ? (when it has to be visible from everywhere?)
  */
 public enum ConfigSingleton {
 	INSTANCE;
